@@ -13,4 +13,9 @@ public class MainController {
         model.addAttribute("name", name);
         return "main";
     }
+    @RequestMapping(value = "/niam")
+    public String niam(@RequestParam(name = "name", required = false, defaultValue = "Wl") String name, Model model) {
+        model.addAttribute("name", name);
+        return "niam";
+    }
 }
