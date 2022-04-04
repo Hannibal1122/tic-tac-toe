@@ -13,7 +13,7 @@ public class MainController {
 
     @RequestMapping(value = "/main")
     public String main(@RequestParam(name = "name", required = false, defaultValue = "Byryndyk") String name, Model model) {
-        model.addAttribute("name", name);
+        model.addAttribute("apple", name);
         getObject();
         return "main";
     }
