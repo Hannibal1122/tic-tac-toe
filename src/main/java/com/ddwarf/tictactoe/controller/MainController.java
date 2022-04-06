@@ -29,11 +29,15 @@ public class MainController {
     }
     public void getObject() {
         Tiger tiger = new Tiger();
-        Wolf wolf = new Wolf();
-        tiger.attack(wolf);
-        wolf.attack(tiger);
-        tiger.run();
+        Wolf[] wolfs = { new Wolf(), new Wolf(), new Wolf(), new Wolf(), new Wolf(), new Wolf() };
+        wolfs[0].attack(tiger);
+        wolfs[1].attack(tiger);
+        wolfs[2].attack(tiger);
+        wolfs[3].attack(tiger);
+        wolfs[4].attack(tiger);
+        wolfs[5].attack(tiger);
+        // tiger.run();
         System.out.println("tiger="+tiger.health);
-        System.out.println("wolf="+wolf.health);
+        // System.out.println("wolf="+wolf.health);
     }
 }
