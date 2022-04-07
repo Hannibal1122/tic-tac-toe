@@ -30,12 +30,17 @@ public class MainController {
     public void getObject() {
         Tiger tiger = new Tiger();
         Wolf[] wolfs = { new Wolf(), new Wolf(), new Wolf(), new Wolf(), new Wolf(), new Wolf() };
-        wolfs[0].attack(tiger);
-        wolfs[1].attack(tiger);
-        wolfs[2].attack(tiger);
-        wolfs[3].attack(tiger);
-        wolfs[4].attack(tiger);
-        wolfs[5].attack(tiger);
+        /*for (int i = 0; i < wolfs.length; i ++) {
+            wolfs[i].attack(tiger);
+        }*/
+        /*int i = 0;
+        while (i < wolfs.length) {
+            wolfs[i].attack(tiger);
+            i++;
+        }*/
+        for(Wolf wolf: wolfs) {
+            wolf.attack(tiger);
+        }
         // tiger.run();
         System.out.println("tiger="+tiger.health);
         // System.out.println("wolf="+wolf.health);
