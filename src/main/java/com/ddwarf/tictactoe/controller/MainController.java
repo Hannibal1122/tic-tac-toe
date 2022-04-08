@@ -1,6 +1,7 @@
 package com.ddwarf.tictactoe.controller;
 
 import com.ddwarf.tictactoe.core.Animal;
+import com.ddwarf.tictactoe.core.HappyTicket;
 import com.ddwarf.tictactoe.core.Tiger;
 import com.ddwarf.tictactoe.core.Wolf;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,8 @@ public class MainController {
     public String main(@RequestParam(name = "name", required = false, defaultValue = "Byryndyk") String name, Model model) {
         model.addAttribute("apple", name);
         getObject();
+        HappyTicket happyTicket = new HappyTicket();
+        System.out.println(happyTicket.generate(123321));
         return "main";
     }
     @RequestMapping(value = "/niam")
@@ -45,4 +48,5 @@ public class MainController {
         System.out.println("tiger="+tiger.health);
         // System.out.println("wolf="+wolf.health);
     }
+
 }

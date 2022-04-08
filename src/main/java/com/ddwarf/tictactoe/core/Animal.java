@@ -25,7 +25,6 @@ public class Animal {
         if (randomAttack.nextInt(10) > 3) {
             animal.health = animal.health - d;
             System.out.println("Animal был отакован на " + d);
-            // TODO обнаружить косяк
             if (animal.health <= 0) {
                 System.out.println("wasted");
                 animal.isDeath = true;
