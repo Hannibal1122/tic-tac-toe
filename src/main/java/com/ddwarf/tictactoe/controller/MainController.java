@@ -17,7 +17,7 @@ public class MainController {
         model.addAttribute("apple", name);
         getObject();
         HappyTicket happyTicket = new HappyTicket();
-        System.out.println(happyTicket.generate(123321));
+        System.out.println(happyTicket.generate(984751));
         return "main";
     }
     @RequestMapping(value = "/niam")

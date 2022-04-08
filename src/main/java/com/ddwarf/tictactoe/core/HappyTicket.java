@@ -14,15 +14,16 @@ public class HappyTicket {
         int i = 0, a, sum = 0;
         while (number != 0) {
             a = number % 10;
-            if (i < 3) {
-                sum = sum + a;
-            }
-            else {
-                sum = sum - a;
-            }
+            sum = sum + (i < 3 ? a : -a);
             number = number / 10;
             i++;
         }
         return sum == 0;
     }
 }
+/*if (i < 3) {
+        sum = sum + a;
+        }
+        else {
+        sum = sum - a;
+        }*/
