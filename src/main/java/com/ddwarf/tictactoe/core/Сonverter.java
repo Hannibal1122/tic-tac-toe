@@ -1,3 +1,4 @@
+/*
 package com.ddwarf.tictactoe.core;
 
 import java.util.Scanner;
@@ -42,3 +43,4 @@ public class Сonverter {
     }
 
 }
+*/

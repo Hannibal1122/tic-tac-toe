@@ -1,9 +1,6 @@
 package com.ddwarf.tictactoe.controller;
 
-import com.ddwarf.tictactoe.core.Animal;
-import com.ddwarf.tictactoe.core.HappyTicket;
-import com.ddwarf.tictactoe.core.Tiger;
-import com.ddwarf.tictactoe.core.Wolf;
+import com.ddwarf.tictactoe.core.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +33,10 @@ public class MainController {
         return "happy";
     }
     public void getObject() {
-        Tiger tiger = new Tiger();
-        Wolf[] wolfs = { new Wolf(), new Wolf(), new Wolf(), new Wolf(), new Wolf(), new Wolf() };
+
+        //Tiger tiger = new Tiger();                       ост
+        //Wolf[] wolfs = { new Wolf(), new Wolf(), new Wolf(), new Wolf(), new Wolf(), new Wolf() };                ост
+
         /*for (int i = 0; i < wolfs.length; i ++) {
             wolfs[i].attack(tiger);
         }*/
@@ -46,12 +45,17 @@ public class MainController {
             wolfs[i].attack(tiger);
             i++;
         }*/
-        for(Wolf wolf: wolfs) {
-            wolf.attack(tiger);
-        }
-        // tiger.run();
-        System.out.println("tiger="+tiger.health);
-        // System.out.println("wolf="+wolf.health);
-    }
 
+        //for(Wolf wolf: wolfs) {                 ост
+       //     wolf.attack(tiger);                ост
+       // }                                      ост
+
+        // tiger.run();
+
+        //System.out.println("tiger="+tiger.health);                   ост
+
+        // System.out.println("wolf="+wolf.health);
+
+        System.out.println(Converter10to16.to16(11));
+    }
 }
