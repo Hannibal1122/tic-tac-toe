@@ -1,6 +1,5 @@
 package com.ddwarf.tictactoe.controller;
 
-import ch.qos.logback.core.pattern.Converter;
 import com.ddwarf.tictactoe.core.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,6 +56,8 @@ public class MainController {
 
         // System.out.println("wolf="+wolf.health);
 
-        System.out.println(Converter10to16.to16(11, 16));
+        //System.out.println(Converter10to16.to16(11, 16));
+
+        System.out.println(MyСonverter.in16("01001010"));
     }
 }
