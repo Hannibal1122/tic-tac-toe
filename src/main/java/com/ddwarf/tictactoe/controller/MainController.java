@@ -57,6 +57,6 @@ public class MainController {
 
         // System.out.println("wolf="+wolf.health);
 
-        System.out.println(Converter10to16.to16(179, 8));
+        System.out.println(Converter10to16.to16(11, 16));
     }
 }

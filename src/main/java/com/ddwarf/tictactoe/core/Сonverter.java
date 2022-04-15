@@ -15,6 +15,6 @@ public class Сonverter {
              предыдущее b плюс i-тая цифра в двоичном числе умноженная на 2 в степени i
              (int) - обозначает преобразование типа String к типу int */
          }
-         return Converter10to16.to16(b);
+         return Converter10to16.to16(b, 16);
      }
 }
