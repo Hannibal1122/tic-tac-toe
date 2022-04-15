@@ -15,7 +15,6 @@ public class Converter10to16 {
         y = y + Converter10to16.toChar(x);
         return new StringBuilder(y).reverse().toString();
     }
-    // код не будет работать с 2 и 8-ричными системами из-за метода toChar
     private static String toChar (int x) {
         if (x < 10) {
             return String.valueOf(x);
