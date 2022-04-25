@@ -57,11 +57,5 @@ public class MainController {
         // System.out.println("wolf="+wolf.health);
 
         //System.out.println(Converter10to16.to16(11, 16));
-<<<<<<< Updated upstream
-
-        System.out.println(MyСonverter.in16("01001010"));
-=======
-        System.out.println(NumberG.a());
->>>>>>> Stashed changes
     }
 }
