@@ -57,5 +57,7 @@ public class MainController {
         // System.out.println("wolf="+wolf.health);
 
         //System.out.println(Converter10to16.to16(11, 16));
+
+        System.out.println(Massive.createMassive(4, 4));
     }
 }
