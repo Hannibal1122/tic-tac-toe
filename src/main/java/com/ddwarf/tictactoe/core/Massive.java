@@ -4,8 +4,10 @@ public class Massive {
     public static int[][] createMassive(int n, int m) { //n - строка, m - столбец
         int[][] matrix = new int[n][m];
         for (int j = 0; j < n; j++) {
+            System.out.println("");
             for (int i = 0; i < m; i++) {
-                matrix[j][i] = i + 1;
+                matrix[j][i] = i;
+                System.out.print(matrix[j][i] + " ");
             }
         }
         return matrix;
