@@ -2,12 +2,12 @@ package com.ddwarf.tictactoe.core;
 
 public class Massive {
     int[][] matrix;
+
     //n - строка, m - столбец
     public Massive(int n, int m)
     {
         matrix = new int[n][m];
         for (int j = 0; j < n; j++) {
-            System.out.println("");
             for (int i = 0; i < m; i++) {
                 matrix[j][i] = j * n + i;
             }
@@ -18,55 +18,51 @@ public class Massive {
         int[] array;
         if (a > b) {
             for (int i = a; i >= Math.max(1, b + 1); i--) {
-                array = matrix[i];
-                matrix[i] = matrix[i - 1];
-                matrix[i - 1] = array;
+                switchRow(i,-1);
             }
         }
         else {
             for (int i = a; i < Math.min(matrix.length - 1, b); i++) {
-                array = matrix[i];
-                matrix[i] = matrix[i + 1];
-                matrix[i + 1] = array;
+                switchRow(i,1);
             }
         }
     }
-
-    public void columnMassive(int c, int d) {
-        //c - какой сдвигаем, d - куда сдвигаем
-        int[] array = new int[matrix.length];
-        if (c > d) {
-            while(c > d)
+/** Сдвигаем столбец с на столбец d.
+ * с - это индекс столбца, который сдвигаем
+ * d - это индекс столбца, куда сдвигаем
+ * */
+    public void columnMassive(int columnIndex, int columnShiftIndex) {
+         if (columnIndex > columnShiftIndex) {
+            while(columnIndex > columnShiftIndex)
             {
-                // switchColumn(-1);
-                for(int i = 0; i < matrix.length; i++) {
-                    array[i] = matrix[i][c];
-                    matrix[i][c] = matrix[i][c - 1];
-                    matrix[i][c - 1] = array[i];
-                }
-                c--;
+                switchColumn(columnIndex,-1);
+                columnIndex--;
             }
         }
         else {
-            while(c < d)
+            while(columnIndex < columnShiftIndex)
             {
-                // switchColumn(1);
-                for(int i = 0; i < matrix.length; i++) {
-                    array[i] = matrix[i][c];
-                    matrix[i][c] = matrix[i][c + 1];
-                    matrix[i][c + 1] = array[i];
-                }
-                c++;
+                switchColumn(columnIndex,1);
+                columnIndex++;
             }
         }
     }
-    public void switchRow(int direction)
+    public void switchRow(int rowIndex, int direction)
     {
-        // any
+        int[] array;
+        array = matrix[rowIndex];
+        matrix[rowIndex] = matrix[rowIndex + direction];
+        matrix[rowIndex + direction] = array;
     }
-    public void switchColumn(int direction)
+    /**  */
+    public void switchColumn(int columnIndex, int direction)
     {
-        // any
+        int[] array = new int[matrix.length];
+        for(int i = 0; i < matrix.length; i++) {
+            array[i] = matrix[i][columnIndex];
+            matrix[i][columnIndex] = matrix[i][columnIndex + direction];
+            matrix[i][columnIndex + direction] = array[i];
+        }
     }
     public void print()
     {
