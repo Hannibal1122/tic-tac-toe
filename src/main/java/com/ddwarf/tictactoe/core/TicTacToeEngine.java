@@ -19,18 +19,32 @@ public class TicTacToeEngine {
         }
     }
 
-    public void insertCrosses(int i, int j)
+    public void insertCrosse(int i, int j)
     {
         field[i][j] = FieldState.CROSSES;
+        winning(i, j);
     }
 
-    public void insertZeros(int i, int j)
+    public void insertZero(int i, int j)
     {
         field[i][j] = FieldState.ZEROS;
+        winning(i, j);
     }
 
-    public void winning(FieldState[][] field) {
+    public void winning(int i, int j) {
 
+    }
+
+    private int getSum(int i, int j, int dirI, int dirJ, FieldState state) {
+        int sum = 0;
+        int newI = i + dirI;
+        int newJ = j + dirJ;
+        if (newJ < 0 || newI < 0 || newJ >= field[0].length || newI >= field.length)
+            return sum;
+        if (field[newI][newJ] == state) {
+            sum = 1 + getSum(newI, newJ, dirI, dirJ, state);
+        }
+        return sum;
     }
 
 }
@@ -45,7 +59,8 @@ enum FieldState {
 enum GameState {
     GAME_BEGIN("Игра начата"),
     CROSSES_WIN("Крестики победили"),
-    ZEROS_WIN("Нолики победили");
+    ZEROS_WIN("Нолики победили"),
+    WIN_WIN("Ничья");
 
     GameState(String s) {
     }
