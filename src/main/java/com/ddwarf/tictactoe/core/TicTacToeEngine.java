@@ -8,7 +8,6 @@ public class TicTacToeEngine {
 
     FieldState[][] field;
     GameState state = GameState.GAME_BEGIN;
-
     public void generateField (int n, int m)
     {
         state = GameState.GAME_BEGIN;
@@ -19,6 +18,21 @@ public class TicTacToeEngine {
             }
         }
     }
+
+    public void insertCrosses(int i, int j)
+    {
+        field[i][j] = FieldState.CROSSES;
+    }
+
+    public void insertZeros(int i, int j)
+    {
+        field[i][j] = FieldState.ZEROS;
+    }
+
+    public void winning(FieldState[][] field) {
+
+    }
+
 }
 enum FieldState {
     EMPTY(0),
