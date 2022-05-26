@@ -7,7 +7,8 @@ package com.ddwarf.tictactoe.core;
 public class TicTacToeEngine {
 
     FieldState[][] field;
-    GameState state = GameState.GAME_BEGIN;
+    public GameState state = GameState.GAME_BEGIN;
+    int condition = 2;
     public void generateField (int n, int m)
     {
         state = GameState.GAME_BEGIN;
@@ -31,10 +32,24 @@ public class TicTacToeEngine {
         winning(i, j);
     }
 
-    public void winning(int i, int j) {
-
+    public GameState winning(int i, int j) {
+        int sum = 0;
+        sum = 1 + getSum(i, j, 0, 1, field[i][j]) + getSum(i, j, 0, -1, field[i][j]);
+        if (sum == condition) return setState(field[i][j]);
+        sum = 1 + getSum(i, j, 1, 0, field[i][j]) + getSum(i, j, -1, 0, field[i][j]);
+        if (sum == condition) return setState(field[i][j]);
+        sum = 1 + getSum(i, j, -1, -1, field[i][j]) + getSum(i, j, 1, 1, field[i][j]);
+        if (sum == condition) return setState(field[i][j]);
+        sum = 1 + getSum(i, j, -1, 1, field[i][j]) + getSum(i, j, 1, -1, field[i][j]);
+        if (sum == condition) return setState(field[i][j]);
+        return state;
     }
-
+    public GameState setState(FieldState state) {
+        if (state == FieldState.CROSSES) return GameState.CROSSES_WIN;
+        if (state == FieldState.ZEROS) return GameState.ZEROS_WIN;
+        return this.state;
+    }
+// функция getSum задвёт направление + собирает значения, пока не встретит отличительный знак
     private int getSum(int i, int j, int dirI, int dirJ, FieldState state) {
         int sum = 0;
         int newI = i + dirI;
