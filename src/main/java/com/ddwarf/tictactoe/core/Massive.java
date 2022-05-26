@@ -4,8 +4,7 @@ public class Massive {
     int[][] matrix;
 
     //n - строка, m - столбец
-    public Massive(int n, int m)
-    {
+    public Massive(int n, int m) {
         matrix = new int[n][m];
         for (int j = 0; j < n; j++) {
             for (int i = 0; i < m; i++) {
