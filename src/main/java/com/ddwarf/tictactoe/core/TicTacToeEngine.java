@@ -8,7 +8,7 @@ public class TicTacToeEngine {
 
     FieldState[][] field;
     public GameState state = GameState.GAME_BEGIN;
-    int condition = 2;
+    int condition = 5;
     public void generateField (int n, int m)
     {
         state = GameState.GAME_BEGIN;
@@ -23,13 +23,13 @@ public class TicTacToeEngine {
     public void insertCrosse(int i, int j)
     {
         field[i][j] = FieldState.CROSSES;
-        winning(i, j);
+        System.out.println(winning(i, j)); //здесь добавила
     }
 
     public void insertZero(int i, int j)
     {
         field[i][j] = FieldState.ZEROS;
-        winning(i, j);
+        System.out.println(winning(i, j)); //и здесь добавила
     }
 
     public GameState winning(int i, int j) {
@@ -71,12 +71,16 @@ enum FieldState {
     FieldState(int i) {
     }
 }
+
 enum GameState {
-    GAME_BEGIN("Игра начата"),
+    GAME_BEGIN ("Игра начата"),
     CROSSES_WIN("Крестики победили"),
     ZEROS_WIN("Нолики победили"),
     WIN_WIN("Ничья");
 
     GameState(String s) {
     }
+
 }
+
+

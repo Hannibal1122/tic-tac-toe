@@ -27,7 +27,7 @@ public class TicTacToeApplication {
             if(i % 2 == 0)
                 engine.insertCrosse(position.i, position.j);
             else engine.insertZero(position.i, position.j);
-            System.out.println(position.i + " " + position.j + " " + engine.state);
+            System.out.println(position.i + " " + position.j); //отсюда убрала engine.state
         }
     }
     public static Position click(ArrayList<Position> possible)
