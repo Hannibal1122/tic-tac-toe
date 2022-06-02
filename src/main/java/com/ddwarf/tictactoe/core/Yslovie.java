@@ -1,29 +1,26 @@
 package com.ddwarf.tictactoe.core;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.ArrayList;
 import java.util.Random;
 
-@SpringBootApplication
-
 public class Yslovie {
-    int c = 0, z = 0, ww = 0;
+    public void StartTest() {
+        int c = 0; int z = 0; int ww = 0;
         for(int i = 0; i < 100000; i++) {
-            GameState state = Yslovie.StartGame();
-            if(state == GameState.GAME_BEGIN) ww++;
-            else
-            if(state == GameState.CROSSES_WIN) c = c + 1;
+            GameState state = this.StartGame();
+            if (state == GameState.GAME_BEGIN) ww++;
+            else if (state == GameState.CROSSES_WIN) c = c + 1;
             else z = z + 1;
+            System.out.println(c + " " + z + " отдельно " + ww);
         }
-        System.out.println(c + " " + z + " отдельно " + ww);
-public Position click(ArrayList<Position> possible) {
+    }
+    public Position click(ArrayList<Position> possible) {
         int r = new Random().nextInt(possible.size());
         Position position = possible.get(r);
         possible.remove(r);
         return position;
-    }
-public GameState StartGame() {
+        }
+    public GameState StartGame() {
         TicTacToeEngine engine = new TicTacToeEngine();
         engine.generateField(10, 10);
 
@@ -35,7 +32,7 @@ public GameState StartGame() {
         for(int i = 0; i < 100; i++)
         {
         if(engine.state != GameState.GAME_BEGIN) break;
-        Position position = Yslovie.click(possible);
+        Position position = this.click(possible);
         if(i % 2 == 0)
         engine.insertCrosse(position.i, position.j);
         else engine.insertZero(position.i, position.j);
