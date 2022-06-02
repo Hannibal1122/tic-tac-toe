@@ -1,14 +1,14 @@
 package com.ddwarf.tictactoe.core;
-
-// TODO спроектировать движок игры в крестики-нолики
-// TODO добавить метод генерации поля
-// TODO добавить метод вставки крестика или нолика на поле
-// TODO добавить метод рассчёта победы крестиков или ноликов
+import com.ddwarf.tictactoe.core.GameState;
+// TODO спроектировать движок игры в крестики-нолики +
+// TODO добавить метод генерации поля +
+// TODO добавить метод вставки крестика или нолика на поле +
+// TODO добавить метод рассчёта победы крестиков или ноликов +
 public class TicTacToeEngine {
 
     FieldState[][] field;
     public GameState state = GameState.GAME_BEGIN;
-    int condition = 5;
+    int condition = 7;
     public void generateField (int n, int m)
     {
         state = GameState.GAME_BEGIN;
@@ -23,13 +23,13 @@ public class TicTacToeEngine {
     public void insertCrosse(int i, int j)
     {
         field[i][j] = FieldState.CROSSES;
-        System.out.println(winning(i, j)); //здесь добавила
+        this.state = winning(i, j);
     }
 
     public void insertZero(int i, int j)
     {
         field[i][j] = FieldState.ZEROS;
-        System.out.println(winning(i, j)); //и здесь добавила
+        this.state = winning(i, j);
     }
 
     public GameState winning(int i, int j) {
@@ -49,7 +49,7 @@ public class TicTacToeEngine {
         if (state == FieldState.ZEROS) return GameState.ZEROS_WIN;
         return this.state;
     }
-// функция getSum задвёт направление + собирает значения, пока не встретит отличительный знак
+// функция getSum задаёт направление + собирает значения, пока не встретит отличительный знак
     private int getSum(int i, int j, int dirI, int dirJ, FieldState state) {
         int sum = 0;
         int newI = i + dirI;
@@ -72,15 +72,5 @@ enum FieldState {
     }
 }
 
-enum GameState {
-    GAME_BEGIN ("Игра начата"),
-    CROSSES_WIN("Крестики победили"),
-    ZEROS_WIN("Нолики победили"),
-    WIN_WIN("Ничья");
-
-    GameState(String s) {
-    }
-
-}
 
 
