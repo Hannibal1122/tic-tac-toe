@@ -19,28 +19,28 @@ public class Yslovie {
         Position position = possible.get(r);
         possible.remove(r);
         return position;
-        }
+    }
     public GameState StartGame() {
         TicTacToeEngine engine = new TicTacToeEngine();
         engine.generateField(10, 10);
 
         ArrayList<Position> possible = new ArrayList<>();
         for(int i = 0; i < 10; i++)
-        for(int j = 0; j < 10; j++)
-        possible.add(new Position(i, j));
+            for(int j = 0; j < 10; j++)
+                possible.add(new Position(i, j));
 
         for(int i = 0; i < 100; i++)
         {
-        if(engine.state != GameState.GAME_BEGIN) break;
-        Position position = this.click(possible);
-        if(i % 2 == 0)
-        engine.insertCrosse(position.i, position.j);
-        else engine.insertZero(position.i, position.j);
-        // System.out.println(position.i + " " + position.j + " " + engine.state);
+            if(engine.state != GameState.GAME_BEGIN) break;
+            Position position = this.click(possible);
+            if(i % 2 == 0)
+                engine.insertCrosse(position.i, position.j);
+            else engine.insertZero(position.i, position.j);
+            // System.out.println(position.i + " " + position.j + " " + engine.state);
         }
         return engine.state;
-        }
-        }
+    }
+}
 
 class Position
 {
