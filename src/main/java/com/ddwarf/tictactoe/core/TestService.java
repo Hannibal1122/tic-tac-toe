@@ -3,11 +3,14 @@ package com.ddwarf.tictactoe.core;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Yslovie {
+import com.ddwarf.tictactoe.core.ttt.GameState;
+import com.ddwarf.tictactoe.core.ttt.TicTacToeEngine;
+
+public class TestService {
     public void StartTest() {
         int c = 0; int z = 0; int ww = 0;
         for(int i = 0; i < 100000; i++) {
-            GameState state = this.StartGame();
+            String state = this.StartGame();
             if (state == GameState.GAME_BEGIN) ww++;
             else if (state == GameState.CROSSES_WIN) c = c + 1;
             else z = z + 1;
@@ -20,7 +23,7 @@ public class Yslovie {
         possible.remove(r);
         return position;
     }
-    public GameState StartGame() {
+    public String StartGame() {
         TicTacToeEngine engine = new TicTacToeEngine();
         engine.generateField(10, 10);
 
