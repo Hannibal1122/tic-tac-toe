@@ -3,11 +3,8 @@ package com.ddwarf.tictactoe.controller;
 import com.ddwarf.tictactoe.core.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Controller
 public class MainController {
@@ -57,9 +54,9 @@ public class MainController {
         // System.out.println("wolf="+wolf.health);
 
         //System.out.println(Converter10to16.to16(11, 16));
-        Massive massive = new Massive(4, 4);
+        /* Massive massive = new Massive(4, 4);
         massive.print();
         massive.columnMassive(1, 3);
-        massive.print();
+        massive.print(); */
     }
 }

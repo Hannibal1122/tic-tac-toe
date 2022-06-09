@@ -8,7 +8,7 @@ public class TicTacToeEngine {
 
     public int[][] field;
     public String state = GameState.GAME_BEGIN;
-    int condition = 7;
+    int condition = 5;
     public void generateField (int n, int m)
     {
         state = GameState.GAME_BEGIN;
