@@ -1,14 +1,14 @@
 package com.ddwarf.tictactoe.core.ttt;
 
-// TODO спроектировать движок игры в крестики-нолики +
-// TODO добавить метод генерации поля +
-// TODO добавить метод вставки крестика или нолика на поле +
-// TODO добавить метод рассчёта победы крестиков или ноликов +
+// @TODO спроектировать движок игры в крестики-нолики +
+// @TODO добавить метод генерации поля +
+// @TODO добавить метод вставки крестика или нолика на поле +
+// @TODO добавить метод расчёта победы крестиков или ноликов +
 public class TicTacToeEngine {
 
     public int[][] field;
     public String state = GameState.GAME_BEGIN;
-    int condition = 5;
+    public int condition = 5;
     public void generateField (int n, int m)
     {
         state = GameState.GAME_BEGIN;
@@ -49,7 +49,7 @@ public class TicTacToeEngine {
         if (state == FieldState.ZEROS) return GameState.ZEROS_WIN;
         return this.state;
     }
-// функция getSum задаёт направление + собирает значения, пока не встретит отличительный знак
+    /** Задаёт направление + собирает значения, пока не встретит отличительный знак */
     private int getSum(int i, int j, int dirI, int dirJ, int state) {
         int sum = 0;
         int newI = i + dirI;

@@ -4,49 +4,63 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import com.ddwarf.tictactoe.core.ttt.FieldState;
-import com.ddwarf.tictactoe.core.ttt.TicTacToeEngine;
+import com.ddwarf.tictactoe.core.ttt.GameState;
+import com.ddwarf.tictactoe.core.ttt.ai.MainAI;
+import com.ddwarf.tictactoe.core.ttt.classes.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/game")
 public class TicTacToeController
 {
+    Logger logger = LoggerFactory.getLogger("Tic-Tac-Toe");
+    
     HashMap<String, Game> games = new HashMap<>();
 
     @Autowired private SimpMessagingTemplate messagingTemplate;
 
-    /* @CrossOrigin
-    @MessageMapping("/send/message")
-    public void sendMessage(GameMessage message){
-        messagingTemplate.convertAndSend("/game/events", message);
-    } */
-
-    @CrossOrigin
+    /**
+     * Создать новую игру
+     * 
+     * Передается логин игрока, который хочет создать.
+     * Высота, ширина, условия окончания игры и режим игры(с онлайн игроком или с ботом).
+     * Игрок, который создает игру ходит первым и играет за крестики
+     */
     @PostMapping("/new_game")
     GameItemResponse createNewGame(@RequestBody NewGameResponse settings) {
         UUID uuid = UUID.randomUUID();
         Game game = new Game();
         game.engine.generateField(settings.height, settings.width);
-        System.out.println(settings.login + " " + settings.width);
+        game.engine.condition = settings.condition;
         game.player1 = settings.login;
         game.queue = game.player1;
         games.put(uuid.toString(), game);
+
+        if(settings.player != "Online") {
+            game.playerAI = MainAI.getAI(settings.player, game.engine.field, FieldState.ZEROS);
+            game.player2 = settings.player;
+        }
 
         GameItemResponse resp = new GameItemResponse(
             game.player1,
             uuid.toString(),
             true
         );
-        System.out.println("[" + game.player1 + "] Create new game - " + uuid);
+        logger.info(game.player1 + " create new game - " + uuid);
         sendMessage("new-game", resp, "");
         return resp;
     }
 
-    @CrossOrigin
+    /**
+     * Удалить игру
+     * 
+     */
     @PostMapping("/remove_game")
     ResponseState removeGame(@RequestBody LoadGameBody settings) {
         Game game = games.get(settings.uuid);
@@ -55,12 +69,14 @@ public class TicTacToeController
             games.remove(settings.uuid);
         else return new ResponseState("Not Ok");
 
-        System.out.println("[" + game.player1 + "] Remove game - " + settings.uuid);
+        logger.info(game.player1 + " remove game - " + settings.uuid);
         sendMessage("remove-game", settings, "");
         return new ResponseState("Ok");
     }
 
-    @CrossOrigin
+    /**
+     * Получить список доступных игр
+     */
     @PostMapping("/get_game_list")
     ArrayList<GameItemResponse> getGameList()
     {
@@ -77,7 +93,18 @@ public class TicTacToeController
         return allGames;
     }
 
-    @CrossOrigin
+    /**
+     * Получить список доступных ботов
+     */
+    @PostMapping("/get_ai_list")
+    String[] getAIList()
+    {
+        return MainAI.allAI;
+    }
+
+    /**
+     * Подключиться к игре
+     */
     @PostMapping("/load_game")
     LoadGameResponse loadGame(@RequestBody LoadGameBody settings)
     {
@@ -94,20 +121,30 @@ public class TicTacToeController
         return new LoadGameResponse(game.engine.state, game.queue, game.engine.field, fieldType);
     }
 
-    @CrossOrigin
     @PostMapping("/click_by_field")
     ClickByFieldResponse loadGame(@RequestBody ClickByFieldBody body)
     {
         Game game = games.get(body.uuid);
         boolean error = true;
-        if(body.login.equals(game.queue)
+        if(game != null
+            && game.engine.state.equals(GameState.GAME_BEGIN)
+            && body.login.equals(game.queue)
             && game.engine.field[body.i][body.j] == FieldState.EMPTY)
         {
+            logger.info(body.login + " click by field [" + body.i + ", " + body.j + "]");
             if(body.login.equals(game.player1))
             {
                 game.engine.insertCrosse(body.i, body.j);
                 game.queue = game.player2;
                 sendMessage("click-by-field", new ClickByFieldEmit(FieldState.CROSSES, body.i, body.j), body.uuid);
+
+                if(game.playerAI != null) {
+                    ClickByFieldEmit position = game.playerAI.getNextClick();
+                    game.engine.insertZero(position.i, position.j);
+                    game.queue = game.player1;
+                    sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j), body.uuid);
+                    logger.info(game.player2 + " click by field [" + position.i + ", " + position.j + "]");
+                }
             }
             else {
                 game.engine.insertZero(body.i, body.j);
@@ -115,10 +152,8 @@ public class TicTacToeController
                 sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, body.i, body.j), body.uuid);
             }
             error = false;
-            System.out.println("[" + body.login + "] Click by field - (" + body.i + "), (" + body.j + ")");
-            System.out.println("[Queue] " + game.queue);
         }
-        return new ClickByFieldResponse(game.engine.state, error);
+        return new ClickByFieldResponse(game != null ? game.engine.state : "", error);
     }
 
     private void sendMessage(String name, Object data, String uuid)
@@ -129,11 +164,14 @@ public class TicTacToeController
         messagingTemplate.convertAndSend("/game/events" + (uuid.equals("") ? "" : "/" + uuid), message);
     }
 }
+
 class NewGameResponse
 {
     public String login;
     public int width;
     public int height;
+    public int condition;
+    public String player;
 }
 class LoadGameBody
 {
@@ -148,28 +186,10 @@ class LoadGameResponse
     public int fieldType;
     public LoadGameResponse(String state, String queue, int[][] field, int fieldType)
     {
+        this.state = state;
         this.queue = queue;
         this.field = field;
         this.fieldType = fieldType;
-    }
-}
-class ClickByFieldBody
-{
-    public String login;
-    public String uuid;
-    public int i;
-    public int j;
-}
-class ClickByFieldEmit
-{
-    public int fieldType;
-    public int i;
-    public int j;
-    public ClickByFieldEmit(int fieldType, int i, int j)
-    {
-        this.fieldType = fieldType;
-        this.i = i;
-        this.j = j;
     }
 }
 class ClickByFieldResponse
@@ -193,13 +213,6 @@ class GameItemResponse
         this.uuid = uuid;
         this.open = open;
     }
-}
-class Game
-{
-    public String player1;
-    public String player2;
-    public String queue;
-    public TicTacToeEngine engine = new TicTacToeEngine();
 }
 class GameMessage
 {
