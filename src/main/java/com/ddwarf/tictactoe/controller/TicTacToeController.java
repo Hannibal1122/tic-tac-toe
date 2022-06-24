@@ -122,7 +122,7 @@ public class TicTacToeController
     }
 
     @PostMapping("/click_by_field")
-    ClickByFieldResponse loadGame(@RequestBody ClickByFieldBody body)
+    ClickByFieldResponse clickByField(@RequestBody ClickByFieldBody body)
     {
         Game game = games.get(body.uuid);
         boolean error = true;
@@ -140,18 +140,25 @@ public class TicTacToeController
 
                 if(game.playerAI != null) {
                     ClickByFieldEmit position = game.playerAI.getNextClick();
-                    game.engine.insertZero(position.i, position.j);
-                    game.queue = game.player1;
-                    sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j), body.uuid);
-                    logger.info(game.player2 + " click by field [" + position.i + ", " + position.j + "]");
+                    if (position == null) { // временный фикс проблемы 
+                        logger.info("Bot poshol popit chaiy");
+                    }
+                    else {
+                        game.engine.insertZero(position.i, position.j);
+                        game.queue = game.player1;
+                        sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j), body.uuid);
+                        logger.info(game.player2 + " click by field [" + position.i + ", " + position.j + "]");
+                        error = false;
+                    }
                 }
+                else error = false;
             }
             else {
                 game.engine.insertZero(body.i, body.j);
                 game.queue = game.player1;
                 sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, body.i, body.j), body.uuid);
+                error = false;
             }
-            error = false;
         }
         return new ClickByFieldResponse(game != null ? game.engine.state : "", error);
     }

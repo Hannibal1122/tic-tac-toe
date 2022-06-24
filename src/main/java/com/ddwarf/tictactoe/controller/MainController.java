@@ -1,6 +1,5 @@
 package com.ddwarf.tictactoe.controller;
 
-import com.ddwarf.tictactoe.core.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

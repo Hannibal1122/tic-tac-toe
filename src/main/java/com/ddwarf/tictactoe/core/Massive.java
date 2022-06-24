@@ -14,7 +14,6 @@ public class Massive {
     }
     public void lineMassive(int a, int b) {
         // a - какую копируем, b - куда переносим
-        int[] array;
         if (a > b) {
             for (int i = a; i >= Math.max(1, b + 1); i--) {
                 switchRow(i,-1);

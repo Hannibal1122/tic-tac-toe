@@ -13,7 +13,6 @@ public class RandomAI extends MainAI {
 
     Logger logger = LoggerFactory.getLogger("Tic-Tac-Toe");
 
-    public static String name = "Lemon Johnny";
     ArrayList<ClickByFieldEmit> possible = new ArrayList<>();
     public int[][] field;
 

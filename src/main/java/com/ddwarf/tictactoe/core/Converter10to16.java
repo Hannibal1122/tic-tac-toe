@@ -1,7 +1,5 @@
 package com.ddwarf.tictactoe.core;
 
-import java.sql.SQLOutput;
-
 public class Converter10to16 {
     public static char[] I = {'A', 'B', 'C', 'D', 'E', 'F'};
     public static String to16 (int x, int f) {
