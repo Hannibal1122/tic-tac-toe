@@ -170,11 +170,11 @@ public class TicTacToeController
                         return ResponseTTTStatus.getMessage("Бот пошел попить чаю!", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                     else {
-                        game.engine.insertZero(position.i, position.j);
-                        game.queue = game.player1;
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {}
+                        game.engine.insertZero(position.i, position.j);
+                        game.queue = game.player1;
                         sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j, game.engine.state, game.queue), body.uuid);
                         logger.info(game.player2 + " click by field [" + position.i + ", " + position.j + "]");
                     }
