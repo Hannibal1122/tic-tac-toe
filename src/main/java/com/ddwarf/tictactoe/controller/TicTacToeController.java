@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.ddwarf.tictactoe.core.ttt.FieldState;
 import com.ddwarf.tictactoe.core.ttt.GameState;
@@ -67,16 +66,17 @@ public class TicTacToeController
      * 
      */
     @PostMapping("/remove_game")
-    ResponseState removeGame(@RequestBody LoadGameBody settings) {
+    ResponseEntity<Object> removeGame(@RequestBody LoadGameBody settings) {
         Game game = games.get(settings.uuid);
-        if(game == null) return new ResponseState("Ok");
+        if(game == null) 
+            return ResponseTTTStatus.getMessage("Вы пытаетесь удалить несуществующую игру!", HttpStatus.INTERNAL_SERVER_ERROR);
         if(game.player1.equals(settings.login))
             games.remove(settings.uuid);
-        else return new ResponseState("Not Ok");
+        else return ResponseTTTStatus.getMessage("У вас нет прав для удаления игры!", HttpStatus.INTERNAL_SERVER_ERROR);
 
         logger.info(game.player1 + " remove game - " + settings.uuid);
         sendMessage("remove-game", settings, "");
-        return new ResponseState("Ok");
+        return ResponseTTTStatus.getMessage("Игра " + settings.uuid + " была удалена!", HttpStatus.OK);
     }
 
     /**
@@ -116,11 +116,7 @@ public class TicTacToeController
         Game game = games.get(settings.uuid);
         int fieldType = FieldState.CROSSES;
         if(game == null) {
-            return new ResponseEntity<Object>(
-                new LoadGameResponse("Игра " + settings.uuid + " была удалена!"),
-                new HttpHeaders(),
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            return ResponseTTTStatus.getMessage("Игра " + settings.uuid + " была удалена!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         // Добавление второго игрока
@@ -138,23 +134,20 @@ public class TicTacToeController
         else {
             logger.info("User " + settings.login + " connect to game " + settings.uuid);
         }
-        return new ResponseEntity<Object>(
+        return ResponseTTTStatus.getResponseEntity(
             new LoadGameResponse(
                 game.engine.state,
                 game.queue,
                 game.engine.field, 
                 fieldType
-            ),
-            new HttpHeaders(),
-            HttpStatus.OK
+            )
         );
     }
 
     @PostMapping("/click_by_field")
-    ClickByFieldResponse clickByField(@RequestBody ClickByFieldBody body)
+    ResponseEntity<Object> clickByField(@RequestBody ClickByFieldBody body)
     {
         Game game = games.get(body.uuid);
-        boolean error = true;
         if(game != null
             && game.engine.state.equals(GameState.GAME_BEGIN)
             && body.login.equals(game.queue)
@@ -165,33 +158,34 @@ public class TicTacToeController
             {
                 game.engine.insertCrosse(body.i, body.j);
                 game.queue = game.player2;
-                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.CROSSES, body.i, body.j, game.engine.state), body.uuid);
+                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.CROSSES, body.i, body.j, game.engine.state, game.queue), body.uuid);
                 logger.info("sendMessage by CROSSES, next step " + game.queue);
 
                 if(game.playerAI != null) {
                     ClickByFieldEmit position = game.playerAI.getNextClick();
                     if (position == null) { // временный фикс проблемы 
                         logger.info("Bot poshol popit chaiy");
+                        return ResponseTTTStatus.getMessage("Бот пошел попить чаю!", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                     else {
                         game.engine.insertZero(position.i, position.j);
                         game.queue = game.player1;
-                        sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j, game.engine.state), body.uuid);
+                        sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j, game.engine.state, game.queue), body.uuid);
                         logger.info(game.player2 + " click by field [" + position.i + ", " + position.j + "]");
-                        error = false;
                     }
                 }
-                else error = false;
             }
             else {
                 game.engine.insertZero(body.i, body.j);
                 game.queue = game.player1;
-                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, body.i, body.j, game.engine.state), body.uuid);
+                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, body.i, body.j, game.engine.state, game.queue), body.uuid);
                 logger.info("sendMessage by ZEROS, next step " + game.queue);
-                error = false;
             }
         }
-        return new ClickByFieldResponse(game != null ? game.engine.state : "", error);
+        else {
+            return ResponseTTTStatus.getMessage("Вы пытаетесь сделать что-то не хорошее!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseTTTStatus.getMessage("Ход сделан успешно!", HttpStatus.OK);
     }
 
     private void sendMessage(String name, Object data, String uuid)
@@ -235,16 +229,6 @@ class LoadGameResponse
         this.message = message;
     }
 }
-class ClickByFieldResponse
-{
-    public String state;
-    public boolean error;
-    ClickByFieldResponse(String state, boolean error)
-    {
-        this.state = state;
-        this.error = error;
-    }
-}
 class GameItemResponse
 {
     public String name;
@@ -262,11 +246,27 @@ class GameMessage
     public String name;
     public Object data;
 }
-class ResponseState
+class ResponseMessage
 {
-    public String state;
-    ResponseState(String state)
-    {
-        this.state = state;
+    public String message;
+    ResponseMessage(String message) {
+        this.message = message;
+    }
+}
+class ResponseTTTStatus
+{
+    public static ResponseEntity<Object> getMessage(String message, HttpStatus status) {
+        return new ResponseEntity<Object>(
+            new ResponseMessage(message),
+            new HttpHeaders(),
+            status
+        );
+    }
+    public static ResponseEntity<Object> getResponseEntity(Object object) {
+        return new ResponseEntity<Object>(
+            object,
+            new HttpHeaders(),
+            HttpStatus.OK
+        );
     }
 }

@@ -9,11 +9,19 @@ public class ClickByFieldEmit {
     public int j;
     /**  */
     public String state;
-    public ClickByFieldEmit(int fieldType, int i, int j, String state)
+    public String queue;
+    public ClickByFieldEmit(int fieldType, int i, int j)
+    {
+        this.fieldType = fieldType;
+        this.i = i;
+        this.j = j;
+    }
+    public ClickByFieldEmit(int fieldType, int i, int j, String state, String queue)
     {
         this.fieldType = fieldType;
         this.i = i;
         this.j = j;
         this.state = state;
+        this.queue = queue;
     }
 }

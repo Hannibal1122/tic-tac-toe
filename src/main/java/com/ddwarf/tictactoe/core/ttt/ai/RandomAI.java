@@ -22,7 +22,7 @@ public class RandomAI extends MainAI {
 
         for(int i = 0; i < field.length; i++)
             for(int j = 0; j < field[i].length; j++)
-                possible.add(new ClickByFieldEmit(fieldState, i, j, ""));
+                possible.add(new ClickByFieldEmit(fieldState, i, j));
     }
 
     public ClickByFieldEmit getNextClick() {
@@ -31,10 +31,9 @@ public class RandomAI extends MainAI {
         if(length == 0) return null;
 
         int r = new Random().nextInt(length);
-        logger.info("Random from " + length + " get " + r);
-        possible.remove(r);
 
         ClickByFieldEmit position = possible.get(r);
+        possible.remove(r);
         if(field[position.i][position.j] != FieldState.EMPTY) {
             return getNextClick();
         }
