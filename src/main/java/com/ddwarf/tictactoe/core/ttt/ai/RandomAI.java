@@ -22,7 +22,7 @@ public class RandomAI extends MainAI {
 
         for(int i = 0; i < field.length; i++)
             for(int j = 0; j < field[i].length; j++)
-                possible.add(new ClickByFieldEmit(fieldState, i, j));
+                possible.add(new ClickByFieldEmit(fieldState, i, j, ""));
     }
 
     public ClickByFieldEmit getNextClick() {

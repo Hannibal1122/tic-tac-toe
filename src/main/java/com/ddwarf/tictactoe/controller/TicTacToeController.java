@@ -42,9 +42,9 @@ public class TicTacToeController
         game.queue = game.player1;
         games.put(uuid.toString(), game);
 
-        if(settings.player != "Online") {
-            game.playerAI = MainAI.getAI(settings.player, game.engine.field, FieldState.ZEROS);
-            game.player2 = settings.player;
+        if(!settings.mode.equals("Online")) {
+            game.playerAI = MainAI.getAI(settings.mode, game.engine.field, FieldState.ZEROS);
+            game.player2 = settings.mode;
         }
 
         GameItemResponse resp = new GameItemResponse(
@@ -112,11 +112,20 @@ public class TicTacToeController
         int fieldType = FieldState.CROSSES;
         if(game == null) return new LoadGameResponse("", "", new int[1][1], 0);
 
-        if(!game.player1.equals(settings.login))
+        // Добавление второго игрока
+        // Первый кто подключится тот второй игрок
+        if(!game.player1.equals(settings.login) && game.player2 == null)
         {
             game.player2 = settings.login;
             if(game.queue == null) game.queue = game.player2;
             fieldType = FieldState.ZEROS;
+        }
+        // Если подключается наблюдатель выдать сообщение
+        if(!game.player1.equals(settings.login) && !game.player2.equals(settings.login)) {
+            logger.info("User " + settings.login + " connect to game " + settings.uuid + " as observer");
+        }
+        else {
+            logger.info("User " + settings.login + " connect to game " + settings.uuid);
         }
         return new LoadGameResponse(game.engine.state, game.queue, game.engine.field, fieldType);
     }
@@ -136,7 +145,8 @@ public class TicTacToeController
             {
                 game.engine.insertCrosse(body.i, body.j);
                 game.queue = game.player2;
-                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.CROSSES, body.i, body.j), body.uuid);
+                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.CROSSES, body.i, body.j, game.engine.state), body.uuid);
+                logger.info("sendMessage by CROSSES, next step " + game.queue);
 
                 if(game.playerAI != null) {
                     ClickByFieldEmit position = game.playerAI.getNextClick();
@@ -146,7 +156,7 @@ public class TicTacToeController
                     else {
                         game.engine.insertZero(position.i, position.j);
                         game.queue = game.player1;
-                        sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j), body.uuid);
+                        sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j, game.engine.state), body.uuid);
                         logger.info(game.player2 + " click by field [" + position.i + ", " + position.j + "]");
                         error = false;
                     }
@@ -156,7 +166,8 @@ public class TicTacToeController
             else {
                 game.engine.insertZero(body.i, body.j);
                 game.queue = game.player1;
-                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, body.i, body.j), body.uuid);
+                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, body.i, body.j, game.engine.state), body.uuid);
+                logger.info("sendMessage by ZEROS, next step " + game.queue);
                 error = false;
             }
         }
@@ -178,7 +189,7 @@ class NewGameResponse
     public int width;
     public int height;
     public int condition;
-    public String player;
+    public String mode;
 }
 class LoadGameBody
 {
