@@ -7,8 +7,13 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.ddwarf.tictactoe.core.ttt.FieldState;
 import com.ddwarf.tictactoe.core.ttt.GameState;
 import com.ddwarf.tictactoe.core.ttt.ai.MainAI;
@@ -106,11 +111,17 @@ public class TicTacToeController
      * Подключиться к игре
      */
     @PostMapping("/load_game")
-    LoadGameResponse loadGame(@RequestBody LoadGameBody settings)
+    ResponseEntity<Object> loadGame(@RequestBody LoadGameBody settings)
     {
         Game game = games.get(settings.uuid);
         int fieldType = FieldState.CROSSES;
-        if(game == null) return new LoadGameResponse("", "", new int[1][1], 0);
+        if(game == null) {
+            return new ResponseEntity<Object>(
+                new LoadGameResponse("Игра " + settings.uuid + " была удалена!"),
+                new HttpHeaders(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
 
         // Добавление второго игрока
         // Первый кто подключится тот второй игрок
@@ -127,7 +138,16 @@ public class TicTacToeController
         else {
             logger.info("User " + settings.login + " connect to game " + settings.uuid);
         }
-        return new LoadGameResponse(game.engine.state, game.queue, game.engine.field, fieldType);
+        return new ResponseEntity<Object>(
+            new LoadGameResponse(
+                game.engine.state,
+                game.queue,
+                game.engine.field, 
+                fieldType
+            ),
+            new HttpHeaders(),
+            HttpStatus.OK
+        );
     }
 
     @PostMapping("/click_by_field")
@@ -202,12 +222,17 @@ class LoadGameResponse
     public int[][] field;
     public String state;
     public int fieldType;
+    public String message;
     public LoadGameResponse(String state, String queue, int[][] field, int fieldType)
     {
         this.state = state;
         this.queue = queue;
         this.field = field;
         this.fieldType = fieldType;
+    }
+    public LoadGameResponse(String message)
+    {
+        this.message = message;
     }
 }
 class ClickByFieldResponse
