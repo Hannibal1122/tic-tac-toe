@@ -148,6 +148,7 @@ public class TicTacToeController
     ResponseEntity<Object> clickByField(@RequestBody ClickByFieldBody body)
     {
         Game game = games.get(body.uuid);
+        ClickByFieldEmit emit;
         if(game != null
             && game.engine.state.equals(GameState.GAME_BEGIN)
             && body.login.equals(game.queue)
@@ -158,7 +159,8 @@ public class TicTacToeController
             {
                 game.engine.insertCrosse(body.i, body.j);
                 game.queue = game.player2;
-                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.CROSSES, body.i, body.j, game.engine.state, game.queue), body.uuid);
+                emit = new ClickByFieldEmit(FieldState.CROSSES, body.i, body.j, game.engine.state, game.queue);
+                sendMessage("click-by-field", emit, body.uuid);
                 logger.info("sendMessage by CROSSES, next step " + game.queue);
 
                 if(game.playerAI != null) {
@@ -170,6 +172,9 @@ public class TicTacToeController
                     else {
                         game.engine.insertZero(position.i, position.j);
                         game.queue = game.player1;
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {}
                         sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, position.i, position.j, game.engine.state, game.queue), body.uuid);
                         logger.info(game.player2 + " click by field [" + position.i + ", " + position.j + "]");
                     }
@@ -178,14 +183,15 @@ public class TicTacToeController
             else {
                 game.engine.insertZero(body.i, body.j);
                 game.queue = game.player1;
-                sendMessage("click-by-field", new ClickByFieldEmit(FieldState.ZEROS, body.i, body.j, game.engine.state, game.queue), body.uuid);
+                emit = new ClickByFieldEmit(FieldState.ZEROS, body.i, body.j, game.engine.state, game.queue);
+                sendMessage("click-by-field", emit, body.uuid);
                 logger.info("sendMessage by ZEROS, next step " + game.queue);
             }
         }
         else {
             return ResponseTTTStatus.getMessage("Вы пытаетесь сделать что-то не хорошее!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseTTTStatus.getMessage("Ход сделан успешно!", HttpStatus.OK);
+        return ResponseTTTStatus.getResponseEntity(emit);
     }
 
     private void sendMessage(String name, Object data, String uuid)
