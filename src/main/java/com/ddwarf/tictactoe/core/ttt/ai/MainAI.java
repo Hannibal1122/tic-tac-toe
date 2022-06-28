@@ -7,7 +7,8 @@ public abstract class MainAI {
     public static String[] allAI = {
         "Lemon Johnny",
         "Altron",
-        "PeterGriffin"
+        "PeterGriffin",
+        "RobbinRotten"
         /** Сюда надо добавить имя вашего AI, чтобы он отобразился на фронте */
     };
 
@@ -20,6 +21,8 @@ public abstract class MainAI {
                 return new Altron(field, fieldState);
             case "PeterGriffin":
                 return new PeterGriffin(field, fieldState);
+            case "RobbinRotten":
+                return new RobbinRotten(field, fieldState);
             /** 
              * Здесь надо возвращать объект вашего AI
              * @example

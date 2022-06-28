@@ -16,7 +16,7 @@ public class RobbinRotten extends MainAI {
     ArrayList<ClickByFieldEmit> possible = new ArrayList<>();
     public int[][] field;
 
-    int condition = 5 - 1;
+    int condition = 5 - 2;
 
     public RobbinRotten(int[][] field, int fieldState) {
 
@@ -28,21 +28,28 @@ public class RobbinRotten extends MainAI {
     }
 
     public ClickByFieldEmit getNextClick() {
+
+        int length = possible.size();
+        if(length == 0) return null;
+
+        ClickByFieldEmit position = null;
         for (int i = 0; i < field.length; i++) 
         {
-            for (int j = 0; j < field[0].length; j++) {
-                if (field [i][j] == 1) {
-
+            int j = 0;
+            for (; j < field[0].length; j++) {
+                if (field[i][j] == 1) {
+                    position = winning(i, j);
+                    if(position != null) break;
                 }
             }
+            if(j != field[0].length) break;
         }
-        int length = possible.size();
 
-        if(length == 0) return null;
+        if(position != null) return position;
 
         int r = new Random().nextInt(length);
 
-        ClickByFieldEmit position = possible.get(r);
+        position = possible.get(r);
         possible.remove(r);
         if(field[position.i][position.j] != FieldState.EMPTY) {
             return getNextClick();
@@ -51,14 +58,31 @@ public class RobbinRotten extends MainAI {
     }
     public ClickByFieldEmit winning(int i, int j) {
         int sum = 0;
-        sum = 1 + getSum(i, j, 0, 1, field[i][j]) + getSum(i, j, 0, -1, field[i][j]);
-        if (sum == condition) return ;
-        sum = 1 + getSum(i, j, 1, 0, field[i][j]) + getSum(i, j, -1, 0, field[i][j]);
+        int rightSum = getSum(i, j, 0, 1, FieldState.CROSSES);
+        int leftSum = getSum(i, j, 0, -1, FieldState.CROSSES);
+        sum = 1 + leftSum + rightSum;
+        int positionI = i;
+        int positionJ = j - leftSum - 1;
+        // logger.info("ClickByFieldEmit: " + sum + " " + i + " " + j + " leftSum: " + leftSum + " rightSum: " + rightSum);
+        if (sum >= condition) return positionJ >= 0 && field[positionI][positionJ] == FieldState.EMPTY ?
+            new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
+            new ClickByFieldEmit(FieldState.ZEROS, positionI, j + rightSum + 1);
+
+        int upSum = getSum(i, j, -1, 0, FieldState.CROSSES);
+        int downSum = getSum(i, j, 1, 0, FieldState.CROSSES);
+        sum = 1 + upSum + downSum;
+        positionI = i - upSum - 1;
+        positionJ = j;
+        // logger.info("ClickByFieldEmit: " + sum + " " + i + " " + j + " leftSum: " + leftSum + " rightSum: " + rightSum);
+        if (sum >= condition) return positionI >= 0 && field[positionI][positionJ] == FieldState.EMPTY ?
+            new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
+            new ClickByFieldEmit(FieldState.ZEROS, i + downSum + 1, positionJ);
+        /* sum = 1 + getSum(i, j, 1, 0, field[i][j]) + getSum(i, j, -1, 0, field[i][j]);
         if (sum == condition) return true;
         sum = 1 + getSum(i, j, -1, -1, field[i][j]) + getSum(i, j, 1, 1, field[i][j]);
         if (sum == condition) return true;
         sum = 1 + getSum(i, j, -1, 1, field[i][j]) + getSum(i, j, 1, -1, field[i][j]);
-        if (sum == condition) return true; 
+        if (sum == condition) return true;  */
         return null;
     }
     private int getSum(int i, int j, int dirI, int dirJ, int state) {
