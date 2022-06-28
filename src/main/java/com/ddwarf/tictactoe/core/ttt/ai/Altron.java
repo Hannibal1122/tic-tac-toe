@@ -32,22 +32,39 @@ public class Altron extends MainAI {
                 newBoard[i * field[0].length + j] = field[i][j];
             }
         }
-        // объявление переменных
-        int fc = 0;
-        String hu = "o";
-        String ai = "x";
-        // подвод статистики лучшего варианта для ai
-        int bestSpot = minimax(newBoard, ai);
-        // регистрация результатов
-           /*Log.v("index: " + bestSpot);
-             Log.v("function calls: " + fc);*/
         return 0;
         // условие вычисления выгодного для бота варианта хода
+        
+    }
+    private boolean winning(int[] board, int player) {
+        if (
+            (board[0] == player && board[1] == player && board[2] == player) ||
+            (board[3] == player && board[4] == player && board[5] == player) ||
+            (board[6] == player && board[7] == player && board[8] == player) ||
+            (board[0] == player && board[3] == player && board[6] == player) ||
+            (board[1] == player && board[4] == player && board[7] == player) ||
+            (board[2] == player && board[5] == player && board[8] == player) ||
+            (board[0] == player && board[4] == player && board[8] == player) ||
+            (board[2] == player && board[4] == player && board[6] == player)
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-    }
-    private int minimax(int[] newBoard, String ai) {
-        return 0;
-    }
+}
+
+
+
+
+
+
+
+
+
+
+
 /*
 Идея 2
 создать бота выставляющего нолик в строку рядом с предыдущим ходом противника
@@ -58,7 +75,6 @@ public class Altron extends MainAI {
 идея 4
 создать бота чередующего идею 3 и скоростное выставление ноликов в ряд
 */
-}
 
 //[0]        [1]        [2]
 //[1][2][3]  [1][2][3]  [1][2][3]
