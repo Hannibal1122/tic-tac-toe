@@ -58,6 +58,10 @@ public class RobbinRotten extends MainAI {
     }
     public ClickByFieldEmit winning(int i, int j) {
         int sum = 0;
+        /*
+        sum = 1 + getSum(i, j, 0, 1, field[i][j]) + getSum(i, j, 0, -1, field[i][j]);
+        if (sum == condition) return setState(field[i][j]);
+        */
         int rightSum = getSum(i, j, 0, 1, FieldState.CROSSES);
         int leftSum = getSum(i, j, 0, -1, FieldState.CROSSES);
         sum = 1 + leftSum + rightSum;
@@ -78,10 +82,26 @@ public class RobbinRotten extends MainAI {
             new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
             new ClickByFieldEmit(FieldState.ZEROS, i + downSum + 1, positionJ);
         /* sum = 1 + getSum(i, j, 1, 0, field[i][j]) + getSum(i, j, -1, 0, field[i][j]);
-        if (sum == condition) return true;
-        sum = 1 + getSum(i, j, -1, -1, field[i][j]) + getSum(i, j, 1, 1, field[i][j]);
-        if (sum == condition) return true;
-        sum = 1 + getSum(i, j, -1, 1, field[i][j]) + getSum(i, j, 1, -1, field[i][j]);
+        if (sum == condition) return true;*/
+        int rightUpSum = getSum(i, j, -1, 1, FieldState.CROSSES);
+        int leftDownSum = getSum(i, j, 1, -1, FieldState.CROSSES);
+        sum = 1 + rightUpSum + leftDownSum;
+        positionI = (i - rightUpSum - 1) + j + 1;
+        positionJ = (i - leftDownSum + 1) + j - 1;
+        if (sum >= condition) return positionJ >= 0 && field[positionI][positionJ] == FieldState.EMPTY ?
+            new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
+            new ClickByFieldEmit(FieldState.ZEROS, i + leftDownSum + 1, j + rightUpSum + 1);
+        /* sum = 1 + getSum(i, j, -1, -1, field[i][j]) + getSum(i, j, 1, 1, field[i][j]);
+        if (sum == condition) return true; */
+        int leftUpSum = getSum(i, j, -1, -1, FieldState.CROSSES);
+        int rightDownSum = getSum(i, j, 1, 1, FieldState.CROSSES);
+        sum = 1 + leftUpSum + rightDownSum;
+        positionI = (i - leftUpSum - 1) + j - 1;
+        positionJ = (i - rightDownSum + 1) + j + 1;
+        if (sum >= condition) return positionJ >= 0 && field[positionI][positionJ] == FieldState.EMPTY ?
+            new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
+            new ClickByFieldEmit(FieldState.ZEROS, i + rightDownSum + 1, j + leftUpSum + 1);
+        /* sum = 1 + getSum(i, j, -1, 1, field[i][j]) + getSum(i, j, 1, -1, field[i][j]);
         if (sum == condition) return true;  */
         return null;
     }
