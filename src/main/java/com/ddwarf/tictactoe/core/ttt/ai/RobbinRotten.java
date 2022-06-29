@@ -57,52 +57,41 @@ public class RobbinRotten extends MainAI {
         return position;
     }
     public ClickByFieldEmit winning(int i, int j) {
-        int sum = 0;
-        /*
-        sum = 1 + getSum(i, j, 0, 1, field[i][j]) + getSum(i, j, 0, -1, field[i][j]);
-        if (sum == condition) return setState(field[i][j]);
-        */
-        SumResponse rightSum = getSum(i, j, 0, 1, FieldState.CROSSES);
-        SumResponse leftSum = getSum(i, j, 0, -1, FieldState.CROSSES);
-        sum = 1 + leftSum.sum + rightSum.sum;
-        // logger.info("ClickByFieldEmit: " + sum + " " + i + " " + j + " leftSum: " + leftSum + " rightSum: " + rightSum);
-        if (sum >= condition && ) return field[positionI][positionJ] == FieldState.EMPTY ?
-            new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
-            new ClickByFieldEmit(FieldState.ZEROS, positionI, j + rightSum + 1);
 
-        int upSum = getSum(i, j, -1, 0, FieldState.CROSSES);
-        int downSum = getSum(i, j, 1, 0, FieldState.CROSSES);
-        sum = 1 + upSum + downSum;
-        positionI = i - upSum - 1;
-        positionJ = j;
-        // logger.info("ClickByFieldEmit: " + sum + " " + i + " " + j + " leftSum: " + leftSum + " rightSum: " + rightSum);
-        if (sum >= condition) return field[positionI][positionJ] == FieldState.EMPTY ?
-            new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
-            new ClickByFieldEmit(FieldState.ZEROS, i + downSum + 1, positionJ);
-        /* sum = 1 + getSum(i, j, 1, 0, field[i][j]) + getSum(i, j, -1, 0, field[i][j]);
-        if (sum == condition) return true;*/
-        int rightUpSum = getSum(i, j, -1, 1, FieldState.CROSSES);
-        int leftDownSum = getSum(i, j, 1, -1, FieldState.CROSSES);
-        sum = 1 + rightUpSum + leftDownSum;
-        positionI = (i - rightUpSum - 1);
-        positionJ = (j + rightUpSum + 1);
-        if (sum >= condition) return field[positionI][positionJ] == FieldState.EMPTY ?
-            new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
-            new ClickByFieldEmit(FieldState.ZEROS, i + leftDownSum + 1, j - leftDownSum - 1);
-        /* sum = 1 + getSum(i, j, -1, -1, field[i][j]) + getSum(i, j, 1, 1, field[i][j]);
-        if (sum == condition) return true; */
-        int leftUpSum = getSum(i, j, -1, -1, FieldState.CROSSES);
-        int rightDownSum = getSum(i, j, 1, 1, FieldState.CROSSES);
-        sum = 1 + leftUpSum + rightDownSum;
-        positionI = (i - leftUpSum - 1);
-        positionJ = (j - leftUpSum - 1);
-        if (sum >= condition) return field[positionI][positionJ] == FieldState.EMPTY ?
-            new ClickByFieldEmit(FieldState.ZEROS, positionI, positionJ) :
-            new ClickByFieldEmit(FieldState.ZEROS, i + rightDownSum + 1, j + rightDownSum + 1);
-        /* sum = 1 + getSum(i, j, -1, 1, field[i][j]) + getSum(i, j, 1, -1, field[i][j]);
-        if (sum == condition) return true;  */
+        ClickByFieldEmit out;
+        out = getPossibleClick(i, j, 0, 1, 0, -1);
+        if(out != null) return out;
+
+        out = getPossibleClick(i, j, -1, 0, 1, 0);
+        if(out != null) return out;
+
+        out = getPossibleClick(i, j, -1, 1, 1, -1);
+        if(out != null) return out;
+
+        out = getPossibleClick(i, j, -1, -1, 1, 1);
+        if(out != null) return out;
+
         return null;
     }
+
+    private ClickByFieldEmit getPossibleClick(int i, int j, int dirIA, int dirJA, int dirIB, int dirJB)
+    {
+        int sum = 0;
+        SumResponse responseA = getSum(i, j, dirIA, dirJA, FieldState.CROSSES);
+        SumResponse responseB = getSum(i, j, dirIB, dirJB, FieldState.CROSSES);
+        sum = 1 + responseA.sum + responseB.sum;
+
+        if (sum >= condition) {
+            if(responseA.i != -1 && field[responseA.i][responseA.j] != FieldState.ZEROS) {
+                return new ClickByFieldEmit(FieldState.ZEROS, responseA.i, responseA.j);
+            }
+            if(responseB.i != -1 && field[responseB.i][responseB.j] != FieldState.ZEROS) {
+                return new ClickByFieldEmit(FieldState.ZEROS, responseB.i, responseB.j);
+            }
+        }
+        return null;
+    }
+
     private SumResponse getSum(int i, int j, int dirI, int dirJ, int state) {
         SumResponse response = new SumResponse();
         int newI = i + dirI;
@@ -124,6 +113,6 @@ public class RobbinRotten extends MainAI {
 
 class SumResponse {
     public int sum = 0;
-    public int i;
-    public int j;
+    public int i = -1;
+    public int j = -1;
 }
