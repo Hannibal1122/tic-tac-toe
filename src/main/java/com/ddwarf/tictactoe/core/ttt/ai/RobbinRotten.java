@@ -16,11 +16,13 @@ public class RobbinRotten extends MainAI {
     ArrayList<ClickByFieldEmit> possible = new ArrayList<>();
     public int[][] field;
 
-    int condition = 5 - 2;
+    int condition;
 
-    public RobbinRotten(int[][] field, int fieldState) {
+    public RobbinRotten(int[][] field, int fieldState, int condition) {
 
         this.field = field;
+
+        this.condition = condition - 2;
 
         for(int i = 0; i < field.length; i++)
             for(int j = 0; j < field[i].length; j++)

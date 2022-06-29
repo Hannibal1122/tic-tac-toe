@@ -12,7 +12,7 @@ public abstract class MainAI {
         /** Сюда надо добавить имя вашего AI, чтобы он отобразился на фронте */
     };
 
-    public static MainAI getAI(String name, int[][] field, int fieldState)
+    public static MainAI getAI(String name, int[][] field, int fieldState, int condition)
     {
         switch (name) {
             case "Lemon Johnny":
@@ -22,7 +22,7 @@ public abstract class MainAI {
             case "PeterGriffin":
                 return new PeterGriffin(field, fieldState);
             case "RobbinRotten":
-                return new RobbinRotten(field, fieldState);
+                return new RobbinRotten(field, fieldState, condition);
             /** 
              * Здесь надо возвращать объект вашего AI
              * @example

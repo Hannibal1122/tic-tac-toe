@@ -47,7 +47,7 @@ public class TicTacToeController
         games.put(uuid.toString(), game);
 
         if(!settings.mode.equals("Online")) {
-            game.playerAI = MainAI.getAI(settings.mode, game.engine.field, FieldState.ZEROS);
+            game.playerAI = MainAI.getAI(settings.mode, game.engine.field, FieldState.ZEROS, game.engine.condition);
             game.player2 = settings.mode;
         }
 
